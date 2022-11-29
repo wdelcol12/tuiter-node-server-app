@@ -1,47 +1,35 @@
-import posts from "./tuits.js";
+
 import nasaTemplate from "./nasaTemplate.js";
-let tuits = posts;
+import * as tuitsDao from '../../controllers/tuits/tuits-dao.js'
 
 const TuitsController = (app) => {
-  app.post('/api/tuits', createTuit);
-  app.get('/api/tuits', findTuits);
-  app.put('/api/tuits/:tid', updateTuit);
-  app.delete('/api/tuits/:tid', deleteTuit);
+    app.post('/api/tuits', createTuit);
+    app.get('/api/tuits', findTuits);
+    app.put('/api/tuits/:tid', updateTuit);
+    app.delete('/api/tuits/:tid', deleteTuit);
 }
 
-const createTuit = (req, res) => {
-  let newTuit = req.body;
-  newTuit._id = (new Date()).getTime() + '';
-  newTuit = { ...nasaTemplate, ...newTuit };
-  console.log(newTuit);
-  tuits.push(newTuit);
-  res.json(newTuit);
+const createTuit = async (req, res) => {
+    let newTuit = req.body;
+    newTuit = { ...nasaTemplate, ...newTuit };
+    const insertedTuit = await tuitsDao.createTuit(newTuit);
+    res.json(insertedTuit);
 }
-const findTuits = (req, res) => {
-  const type = req.query.type
-  if (type) {
-    const tuitsOfType = tuits
-      .filter(t => t.type === type)
-    res.json(tuitsOfType)
-    return
-  }
-  res.json(tuits)
+const findTuits = async (req, res) => {
+    const tuits = await tuitsDao.findTuits();
+    res.json(tuits)
 }
-const updateTuit = (req, res) => {
-  const tuitdIdToUpdate = req.params.tid;
-  const updates = req.body;
-  const tuitIndex = tuits.findIndex(
-    (t) => t._id.toString() === tuitdIdToUpdate)
-  tuits[tuitIndex] =
-    { ...tuits[tuitIndex], ...updates };
-  res.sendStatus(200);
+const updateTuit = async (req, res) => {
+    const tuitdIdToUpdate = req.params.tid;
+    const updates = req.body;
+    const status = await tuitsDao.updateTuit(tuitdIdToUpdate, updates);
+    res.json(status);
 }
 
-const deleteTuit = (req, res) => {
-  const tuitdIdToDelete = req.params.tid;
-  tuits = tuits.filter((t) =>
-    t._id.toString() !== tuitdIdToDelete);
-  res.sendStatus(200);
+const deleteTuit = async (req, res) => {
+    const tuitdIdToDelete = req.params.tid;
+    const status = await tuitsDao.deleteTuit(tuitdIdToDelete);
+    res.json(status);
 }
 
 

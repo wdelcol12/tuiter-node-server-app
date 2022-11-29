@@ -4,6 +4,11 @@ import HelloController from "./controllers/hello-controller.js";
 import UserController from "./controllers/users/users-controller.js";
 import TuitsController from "./controllers/tuits/tuits-controller.js";
 const app = express();
+
+import mongoose from "mongoose";
+const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || 'mongodb://localhost:27017/tuiter'
+//const CONNECTION_STRING = 'mongodb+srv://wdelcol:<password>@cluster0.ukdowqv.mongodb.net/?retryWrites=true&w=majority';
+mongoose.connect(CONNECTION_STRING);
 app.use(express.json());
 app.use(cors())
 TuitsController(app);
