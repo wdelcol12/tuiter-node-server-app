@@ -8,9 +8,10 @@ const app = express();
 import mongoose from "mongoose";
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || 'mongodb://localhost:27017/tuiter'
 //const CONNECTION_STRING = 'mongodb+srv://wdelcol:<password>@cluster0.ukdowqv.mongodb.net/?retryWrites=true&w=majority';
+
+//console.log(CONNECTION_STRING);
 mongoose.connect(CONNECTION_STRING);
 app.use(express.json());
-app.use(cors())
 TuitsController(app);
 HelloController(app);
 UserController(app);
